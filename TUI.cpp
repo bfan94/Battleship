@@ -5,6 +5,7 @@
  **/
 
 #include "TUI.h"
+#include <iostream>
 
 void ClearScreen(void)
 {
@@ -22,12 +23,12 @@ void EnemyGrid::print(void)
 	UInode start; // Create the first node in the list, which defaults to the end sentinel.
 	start.next = new UInode; // Lazy hack to prevent segfault on edge case.
 	int newX, newY; // Some temps to make the linked list math more readable.
-	UInode* j; 
+	UInode* j;
 	UInode* tmp;
 	// No Phase 1, no known ship locations.
 
 	// Phase 2: insert missiles.
-	
+
 	gridElem *p = &mListStart; // Start at the beginning of the missile list. Last (invalid) missile will point null.
 	while( (*p).next )
 	{
@@ -39,14 +40,14 @@ void EnemyGrid::print(void)
 		{
 			(*j).l = "X";
 			(*j).r = "X";
-		}	
+		}
 		else // Normal checks.
 		{
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			if( ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) == ((newY)*10+(newX)) ) // Same position, missile overwrites ship segment.
 			{
-				(*((*j).next)).l = "X"; 
-				(*((*j).next)).r = "X"; 
+				(*((*j).next)).l = "X";
+				(*((*j).next)).r = "X";
 			}
 			else // Miss, insert new node.
 			{
@@ -77,18 +78,18 @@ void EnemyGrid::print(void)
 		std::cout << boost::format("%2d") % (i+1) << "|"; // Print current row index and cell preamble.
 		for(k = 0; k < 10; k++) // Column iterator.
 		{
-			if( (*j).x == k && (*j).y == i ) 
+			if( (*j).x == k && (*j).y == i )
 			{
-				std::cout << (*j).l << (*j).r << "|"; 
+				std::cout << (*j).l << (*j).r << "|";
 				if( (*j).next ) j = (*j).next;
 			}
 			else std::cout << "  |"; // Empty cell.
-		}	
+		}
 		std::cout << std::endl << "  +--+--+--+--+--+--+--+--+--+--+" << std::endl;
 	}
 }
 
-// Routine to draw a gameboard on the screen. 
+// Routine to draw a gameboard on the screen.
 void FriendGrid::print(void)
 {
 	// Phase 1 - Assemble ship data.
@@ -153,7 +154,7 @@ void FriendGrid::print(void)
 	}
 
 	int newX, newY; // Some temps to make the linked list math more readable.
-	UInode* j; 
+	UInode* j;
 	UInode* tmp;
 
 	// S2 - length 4
@@ -164,10 +165,10 @@ void FriendGrid::print(void)
 		j = &start;
 		if(ship2->getOrient()) // Vert.
 		{
-			// Advance until we're at the desired pos or we hit the end of the chain. 
+			// Advance until we're at the desired pos or we hit the end of the chain.
 			// Target = ((newY)*10+(newX))
 			// Next = ((((*((*j).next)).y) * 10) + ((*((*j).next)).x))
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode(); // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -179,8 +180,8 @@ void FriendGrid::print(void)
 
 			for(int i = 0; i < 2; i++)
 			{
-				// Advance until we're at the desired row or we hit the end of the chain. 
-				while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+i+1)*10+(newX)) ) j = (*j).next; 
+				// Advance until we're at the desired row or we hit the end of the chain.
+				while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+i+1)*10+(newX)) ) j = (*j).next;
 				tmp = new UInode; // Make a new node to insert into the list.
 				(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 				(*j).next = tmp; // And point the previous node to the new node.
@@ -191,8 +192,8 @@ void FriendGrid::print(void)
 				(*tmp).r = "┃";
 			}
 
-			// Advance until we're at the desired row or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+3)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired row or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+3)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -204,8 +205,8 @@ void FriendGrid::print(void)
 		}
 		else
 		{
-			// Advance until we're at the desired row or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired row or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -217,8 +218,8 @@ void FriendGrid::print(void)
 
 			for(int i = 0; i < 2; i++)
 			{
-				// Advance until we're at the desired position or we hit the end of the chain. 
-				while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+i+1)) ) j = (*j).next; 
+				// Advance until we're at the desired position or we hit the end of the chain.
+				while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+i+1)) ) j = (*j).next;
 				tmp = new UInode; // Make a new node to insert into the list.
 				(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 				(*j).next = tmp; // And point the previous node to the new node.
@@ -229,8 +230,8 @@ void FriendGrid::print(void)
 				(*tmp).r = "━";
 			}
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+3)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+3)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -251,8 +252,8 @@ void FriendGrid::print(void)
 
 		if(ship3->getOrient()) // Vert.
 		{
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -262,8 +263,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "┏";
 			(*tmp).r = "┓";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+1)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+1)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -273,8 +274,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "┃";
 			(*tmp).r = "┃";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+2)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+2)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -286,8 +287,8 @@ void FriendGrid::print(void)
 		}
 		else
 		{
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -297,8 +298,8 @@ void FriendGrid::print(void)
 			(*tmp).l = '[';
 			(*tmp).r = "━";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+1)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+1)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -308,8 +309,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "━";
 			(*tmp).r = "━";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+2)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+2)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -330,8 +331,8 @@ void FriendGrid::print(void)
 
 		if(ship4->getOrient()) // Vert.
 		{
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -341,8 +342,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "┏";
 			(*tmp).r = "┓";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+1)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+1)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -352,8 +353,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "┃";
 			(*tmp).r = "┃";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+2)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+2)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -365,8 +366,8 @@ void FriendGrid::print(void)
 		}
 		else
 		{
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -376,8 +377,8 @@ void FriendGrid::print(void)
 			(*tmp).l = '[';
 			(*tmp).r = "━";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+1)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+1)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -387,8 +388,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "━";
 			(*tmp).r = "━";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+2)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+2)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -409,8 +410,8 @@ void FriendGrid::print(void)
 
 		if(ship5->getOrient()) // Vert.
 		{
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -420,8 +421,8 @@ void FriendGrid::print(void)
 			(*tmp).l = "┏";
 			(*tmp).r = "┓";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+1)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY+1)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -433,8 +434,8 @@ void FriendGrid::print(void)
 		}
 		else
 		{
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -444,8 +445,8 @@ void FriendGrid::print(void)
 			(*tmp).l = '[';
 			(*tmp).r = "━";
 
-			// Advance until we're at the desired position or we hit the end of the chain. 
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+1)) ) j = (*j).next; 
+			// Advance until we're at the desired position or we hit the end of the chain.
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX+1)) ) j = (*j).next;
 			tmp = new UInode; // Make a new node to insert into the list.
 			(*tmp).next = (*j).next; // Make the node point to the previous node's next (may be null).
 			(*j).next = tmp; // And point the previous node to the new node.
@@ -458,7 +459,7 @@ void FriendGrid::print(void)
 	}
 
 	// Phase 2: insert missiles.
-	
+
 	gridElem *p = &mListStart; // Start at the beginning of the missile list. Last (invalid) missile will point null.
 	while( (*p).next )
 	{
@@ -470,14 +471,14 @@ void FriendGrid::print(void)
 		{
 			(*j).l = "X";
 			(*j).r = "X";
-		}	
+		}
 		else // Normal checks.
 		{
-			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next; 
+			while( (*(*j).next).next && ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) < ((newY)*10+(newX)) ) j = (*j).next;
 			if( ((((*((*j).next)).y) * 10) + ((*((*j).next)).x)) == ((newY)*10+(newX)) ) // Same position, missile overwrites ship segment.
 			{
-				(*((*j).next)).l = "X"; 
-				(*((*j).next)).r = "X"; 
+				(*((*j).next)).l = "X";
+				(*((*j).next)).r = "X";
 			}
 			else // Miss, insert new node.
 			{
@@ -508,13 +509,13 @@ void FriendGrid::print(void)
 		std::cout << boost::format("%2d") % (i+1) << "|"; // Print current row index and cell preamble.
 		for(k = 0; k < 10; k++) // Column iterator.
 		{
-			if( (*j).x == k && (*j).y == i ) 
+			if( (*j).x == k && (*j).y == i )
 			{
-				std::cout << (*j).l << (*j).r << "|"; 
+				std::cout << (*j).l << (*j).r << "|";
 				if( (*j).next ) j = (*j).next;
 			}
 			else std::cout << "  |"; // Empty cell.
-		}	
+		}
 		std::cout << std::endl << "  +--+--+--+--+--+--+--+--+--+--+" << std::endl;
 	}
 }
