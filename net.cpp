@@ -5,6 +5,17 @@
  **/
 #include "net.h"
 
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
+#include "GameCore.h"
+
 // Fuck boost, I'm just doing raw sockets. --S
 
 int sockfd, newsockfd;
@@ -26,7 +37,7 @@ void serverStart(void)
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(PORTNO);
 
-    if ( bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0 ) 
+    if ( bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0 )
 	{
 		std::cout << "Error on binding to net adapter." << std::endl;
 	}
@@ -34,10 +45,10 @@ void serverStart(void)
 
     clilen = sizeof(cli_addr);
 	// This next line blocks until a connection is made.
-    newsockfd = accept(sockfd, 
-                (struct sockaddr *) &cli_addr, 
+    newsockfd = accept(sockfd,
+                (struct sockaddr *) &cli_addr,
                 &clilen);
-    if (newsockfd < 0) 
+    if (newsockfd < 0)
 	{
 		std::cout << "ERROR on accept" << std::endl;
 	}
@@ -55,7 +66,7 @@ void clientStart(char* addr)
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 
 	serv_addr.sin_family = AF_INET;
-	bcopy((char *)server->h_addr, 
+	bcopy((char *)server->h_addr,
 	 (char *)&serv_addr.sin_addr.s_addr,
 	  server->h_length);
 	serv_addr.sin_port = htons(PORTNO);
@@ -116,7 +127,7 @@ bool moveReceive(void)
     n = read(newsockfd,buffer,2); // ALL THE ASSUMPTIONS, NONE OF THE ERROR CHECKING! #YOLO
     if (n < 0) std::cout << "ERROR reading from socket" << std::endl;
 	int mov = atoi(buffer);
-	
+
 	// Insert hit.
 	gridElem* i = &fg->mListStart;
 	while( (*i).next ) i = (*i).next;
@@ -128,18 +139,18 @@ bool moveReceive(void)
 	    s2->checkValidHit((mov/10), (mov%10)) ||
 	    s3->checkValidHit((mov/10), (mov%10)) ||
 	    s4->checkValidHit((mov/10), (mov%10)) ||
-	    s5->checkValidHit((mov/10), (mov%10)) ) 
+	    s5->checkValidHit((mov/10), (mov%10)) )
 	{
 		(*i).m->setHit(true);
 		hitCount++;
-		if(hitCount >= (5+4+3+3+2)) 
+		if(hitCount >= (5+4+3+3+2))
 		{
 			n = write(newsockfd,"DEAD",4);
 			if (n < 0) std::cout << "ERROR writing to socket" << std::endl;
 			gameOver = true;
 			return true;
 		}
-		else 
+		else
 		{
 			n = write(newsockfd,"HIT ",4);
 			if (n < 0) std::cout << "ERROR writing to socket" << std::endl;
